@@ -6,15 +6,14 @@ using namespace std;
 class Usuario {
     private:
         string Nombre, Correo, Especialidad;
-        int Telefono, Estrato;
-    
+        int Telefono, Estrato; 
+        
     public:
         // Setters y getters
         void SetNombre(const string& NuevoNombre) { 
             Nombre = NuevoNombre;
         }
-
-        string GetNombre() const {
+        string GetNombre() const{
             return Nombre;
         }
 
@@ -58,6 +57,10 @@ class Usuario {
             Telefono = Telefono_;
             Estrato = Estrato_;
         }
+        Usuario(const string& Nombre_,const string& Correo_){
+            Nombre = Nombre_;
+            Correo = Correo_;
+        }
 
         Usuario(){}
 
@@ -67,7 +70,7 @@ class Usuario {
 
 // Clase Paciente, hereda de Usuario
 class Paciente : public Usuario {
-    private:
+    private:   
         string EstadoGeneral, ResultadosExamenes, ExamenesNecesarios;
         int ValorConsulta;
         bool Referido = false, Afiliado = false;
@@ -141,7 +144,7 @@ class Paciente : public Usuario {
 
 // Nueva clase Afiliacion
 class Afiliacion {
-    private:
+    public:
         Paciente paciente; // Referencia al paciente
     public:
         // Constructor que toma un paciente
@@ -149,7 +152,7 @@ class Afiliacion {
 
         // Método para calcular el costo mensual de la afiliación
         int CalcularCostoMensual() const {
-            return 2 * paciente.GetValorConsulta();
+            return 2 * paciente.GetValorConsulta();;
         }
 
         // Método para calcular el costo anual de la afiliación con el descuento del 30%
@@ -224,14 +227,14 @@ class Empleado {
 };
 
 class Specialistmedic {
-    private:
+    public:
         Empleado empleado;
         Paciente paciente;
         Afiliacion afiliacion;
 
     public:
         // Constructor que inicializa todos los objetos
-        Specialistmedic(const Empleado& emp, const Paciente& pac) : empleado(emp), paciente(pac), afiliacion(pac) {}
+        Specialistmedic(const Empleado& emp, const Paciente& pac) : empleado(emp), paciente(pac), afiliacion(pac){};
 
         // Método para mostrar la información de afiliación
         void MostrarInformacion() {
@@ -247,8 +250,14 @@ class Specialistmedic {
             cout << "Especialidad: " << paciente.GetEspecialidad() << endl;
             cout << "Valor de la consulta: " << paciente.GetValorConsulta() << endl;
 
-            cout << "\nCostos de la afiliación: " << endl;
-            afiliacion.MostrarCostosAfiliacion();
+            if(paciente.GetAfiliado()){
+                cout << "\nCostos de la afiliación: " << endl;
+                afiliacion.MostrarCostosAfiliacion();
+            }else{
+                cout << "\nNo es afiliado: " << endl;
+            }
+            
+
         }
 
         // Métodos para modificar los datos del empleado o paciente
@@ -268,23 +277,28 @@ class Specialistmedic {
 
         // Método para recalcular los costos
         void RecalcularAfiliacion() {
-            afiliacion.RecalcularCostos();
+            if(paciente.GetAfiliado()){
+                afiliacion.RecalcularCostos();
+            }else{
+                cout << "No es afiliado" << endl;
+            }
+
         }
 };
 
 int main() {
     // Crear un empleado
-    Empleado empleado1("Juan Perez", "juan@hospital.com", 1234567, 101);
+    Empleado empleado1("Miguel", "Miguel@hospital.com", 1234567, 101);
 
     // Crear un paciente
     Paciente paciente1("Maria Lopez", "maria@correo.com", "Cardiología", 9876543, 3, "Estable", "Sin anormalidades", "Exámenes de sangre", 50000, true, true);
-
+    
     // Crear una instancia de Specialistmedic con los objetos anteriores
     Specialistmedic specialistmedic1(empleado1, paciente1);
 
     // Mostrar la información y recalcular costos
     specialistmedic1.MostrarInformacion();
     specialistmedic1.RecalcularAfiliacion();
-
+    
     return 0;
 }
